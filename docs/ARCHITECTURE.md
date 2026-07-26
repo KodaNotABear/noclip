@@ -127,8 +127,8 @@ centers are guaranteed open because walls only exist on grid lines.
 
 ### `data/noclip/`: worldgen wiring (all datapack-format JSON)
 - **`dimension_type/backrooms.json`**: 64 tall, min_y 0, no skylight,
-  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.3
-  (the main brightness knob), nether-style effects (no sky rendering).
+  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.15
+  (the main brightness knob), overworld effects for directional face shading (the sky is sealed away anyway).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
   no features. Spawn lists carry the full overworld cast (hostiles including
   slime and zombie villager, plus passive animals for player-built pastures).
