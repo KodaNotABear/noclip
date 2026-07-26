@@ -81,9 +81,28 @@ def light():
         px.append(row)
     return px
 
+def dead_light():
+    # same panel, unlit: gray tubes, grimy diffuser
+    px = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            if x in (0, 15) or y in (0, 15):
+                base = (105, 105, 98)
+            elif x in (5, 10):
+                base = (172, 172, 162)
+            elif h(x, y, 8) < 24:
+                base = (128, 126, 116)  # grime
+            else:
+                base = (156, 155, 146)
+            row.append(jitter(base, x, y, 9, 3))
+        px.append(row)
+    return px
+
 os.makedirs(OUT, exist_ok=True)
 write_png(os.path.join(OUT, "yellow_wallpaper.png"), wallpaper())
 write_png(os.path.join(OUT, "stained_ceiling.png"), ceiling())
 write_png(os.path.join(OUT, "damp_carpet.png"), carpet())
 write_png(os.path.join(OUT, "fluorescent_light.png"), light())
-print("wrote 4 textures to", OUT)
+write_png(os.path.join(OUT, "dead_fluorescent_light.png"), dead_light())
+print("wrote 5 textures to", OUT)

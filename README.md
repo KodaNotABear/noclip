@@ -23,6 +23,8 @@ complete Minecraft from inside the endless yellow rooms.
 - Unbreakable block set + breakable fluorescent light.
 - World preset registered under the Normal tab of the world-type cycle button.
 - Safe spawn handling (cell centers are always open).
+- Hostile and passive spawn lists with vanilla light rules; dead fluorescent
+  panels and blackout pockets provide the spawnable darkness.
 - Room-template system: single-cell rooms authored as structure NBT + JSON
   registry entries, loaded from any datapack namespace, with working block
   entities (loot chests). See [docs/ROOMS.md](docs/ROOMS.md). Ships three

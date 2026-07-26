@@ -74,6 +74,8 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private static final int SALT_ROOM_ROT = 0x60;
     private static final int SALT_BIG_ROT = 0x62;
     private static final int SALT_SEALED_DOORS = 0x64;
+    private static final int SALT_DEAD_LIGHT = 0x66;
+    private static final int SALT_BLACKOUT = 0x68;
 
     /** Chance (out of 256) that a cell hosts a single-cell room. */
     private static final int ROOM_CHANCE = 32;
@@ -169,7 +171,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
                 return NoclipBlocks.YELLOW_WALLPAPER.get().defaultBlockState();
             }
             if (Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
-                return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState();
+                return ceilingLight(seed, cellX, cellZ);
             }
             int localX = Math.floorMod(x, CELL);
             int localZ = Math.floorMod(z, CELL);
@@ -220,7 +222,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             // Isolated (single-zone) warehouses have no pillars, so they get
             // ceiling panels for some glow; merged ones are lit by pillar bands.
             if (isolated && Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
-                return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState();
+                return ceilingLight(seed, cellX, cellZ);
             }
             return NoclipBlocks.STAINED_CEILING.get().defaultBlockState();
         }
@@ -262,6 +264,19 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             }
         }
         return Blocks.AIR.defaultBlockState();
+    }
+
+    /**
+     * Cell-center ceiling panel, lit or dead. Dead panels are what create
+     * spawnable darkness: ~15% of cells individually, plus 4x4-cell blackout
+     * pockets (~5% of them) where every panel is out. Vanilla spawn rules do
+     * the rest (monsters need block light 0).
+     */
+    private BlockState ceilingLight(long seed, int cellX, int cellZ) {
+        boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 13;
+        boolean dead = blackout || (hash(seed, cellX, cellZ, SALT_DEAD_LIGHT) & 0xFF) < 38;
+        return dead ? NoclipBlocks.DEAD_FLUORESCENT_LIGHT.get().defaultBlockState()
+                : NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState();
     }
 
     /** A warehouse zone with no orthogonally adjacent warehouse zone. */

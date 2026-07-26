@@ -40,4 +40,11 @@ public class NoclipBlocks {
                     .strength(0.3F)
                     .lightLevel(state -> 13)
                     .sound(SoundType.GLASS));
+
+    /** Burnt-out panel: no light, so the cell below is spawnable darkness. */
+    public static final DeferredBlock<Block> DEAD_FLUORESCENT_LIGHT = BLOCKS.registerSimpleBlock("dead_fluorescent_light",
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(0.3F)
+                    .sound(SoundType.GLASS));
 }

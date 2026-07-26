@@ -130,8 +130,11 @@ centers are guaranteed open because walls only exist on grid lines.
   `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.3
   (the main brightness knob), nether-style effects (no sky rendering).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
-  empty spawn lists, no features. Mob spawning later will be either biome
-  spawners or custom logic.
+  no features. Spawn lists carry the full overworld cast (hostiles including
+  slime and zombie villager, plus passive animals for player-built pastures).
+  Spawnable darkness comes from the generator: ~15% of ceiling panels are dead,
+  and 4x4-cell blackout pockets kill every panel; vanilla's block-light-0 rule
+  does the rest.
 - **`worldgen/world_preset/backrooms.json`**: the "world type". Overworld uses
   `noclip:backrooms` generator + dimension type with a fixed `noclip:level_0`
   biome source; Nether and End are vanilla copies for now (they keep their
