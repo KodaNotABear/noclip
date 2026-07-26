@@ -21,7 +21,6 @@ public class NoclipCreativeTabs {
                 output.accept(NoclipItems.STAINED_CEILING.get());
                 output.accept(NoclipItems.DAMP_CARPET.get());
                 output.accept(NoclipItems.FLUORESCENT_LIGHT.get());
-                output.accept(NoclipItems.DEAD_FLUORESCENT_LIGHT.get());
             })
             .build());
 }

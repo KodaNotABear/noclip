@@ -3,7 +3,6 @@
   "block.noclip.stained_ceiling": "Stained Ceiling Tile",
   "block.noclip.damp_carpet": "Damp Carpet",
   "block.noclip.fluorescent_light": "Fluorescent Light",
-  "block.noclip.dead_fluorescent_light": "Dead Fluorescent Light",
   "itemGroup.noclip": "Noclip",
   "generator.noclip.backrooms": "The Backrooms"
 }

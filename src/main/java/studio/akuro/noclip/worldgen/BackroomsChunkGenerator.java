@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import org.jetbrains.annotations.Nullable;
 import studio.akuro.noclip.Noclip;
+import studio.akuro.noclip.block.FluorescentLightBlock;
 import studio.akuro.noclip.block.NoclipBlocks;
 import studio.akuro.noclip.worldgen.room.RoomGrid;
 import studio.akuro.noclip.worldgen.room.RoomManager;
@@ -275,8 +276,8 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private BlockState ceilingLight(long seed, int cellX, int cellZ) {
         boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 13;
         boolean dead = blackout || (hash(seed, cellX, cellZ, SALT_DEAD_LIGHT) & 0xFF) < 38;
-        return dead ? NoclipBlocks.DEAD_FLUORESCENT_LIGHT.get().defaultBlockState()
-                : NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState();
+        return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
+                .setValue(FluorescentLightBlock.LIT, !dead);
     }
 
     /** A warehouse zone with no orthogonally adjacent warehouse zone. */

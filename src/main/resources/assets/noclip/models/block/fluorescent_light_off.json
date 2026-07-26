@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "noclip:block/dead_fluorescent_light"
+    "all": "noclip:block/fluorescent_light_off"
   }
 }

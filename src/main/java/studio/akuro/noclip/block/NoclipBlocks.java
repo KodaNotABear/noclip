@@ -34,17 +34,11 @@ public class NoclipBlocks {
     public static final DeferredBlock<Block> DAMP_CARPET = BLOCKS.registerSimpleBlock("damp_carpet",
             structural(MapColor.COLOR_YELLOW, SoundType.WOOL));
 
-    public static final DeferredBlock<Block> FLUORESCENT_LIGHT = BLOCKS.registerSimpleBlock("fluorescent_light",
+    public static final DeferredBlock<FluorescentLightBlock> FLUORESCENT_LIGHT = BLOCKS.registerBlock("fluorescent_light",
+            FluorescentLightBlock::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SNOW)
                     .strength(0.3F)
-                    .lightLevel(state -> 13)
-                    .sound(SoundType.GLASS));
-
-    /** Burnt-out panel: no light, so the cell below is spawnable darkness. */
-    public static final DeferredBlock<Block> DEAD_FLUORESCENT_LIGHT = BLOCKS.registerSimpleBlock("dead_fluorescent_light",
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_GRAY)
-                    .strength(0.3F)
+                    .lightLevel(state -> state.getValue(FluorescentLightBlock.LIT) ? 13 : 0)
                     .sound(SoundType.GLASS));
 }

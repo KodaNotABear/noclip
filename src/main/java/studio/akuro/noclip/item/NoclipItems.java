@@ -17,6 +17,4 @@ public class NoclipItems {
             ITEMS.registerSimpleBlockItem(NoclipBlocks.DAMP_CARPET);
     public static final DeferredItem<BlockItem> FLUORESCENT_LIGHT =
             ITEMS.registerSimpleBlockItem(NoclipBlocks.FLUORESCENT_LIGHT);
-    public static final DeferredItem<BlockItem> DEAD_FLUORESCENT_LIGHT =
-            ITEMS.registerSimpleBlockItem(NoclipBlocks.DEAD_FLUORESCENT_LIGHT);
 }

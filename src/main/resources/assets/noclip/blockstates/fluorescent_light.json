@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "noclip:block/fluorescent_light" }
+    "lit=true": { "model": "noclip:block/fluorescent_light" },
+    "lit=false": { "model": "noclip:block/fluorescent_light_off" }
   }
 }
