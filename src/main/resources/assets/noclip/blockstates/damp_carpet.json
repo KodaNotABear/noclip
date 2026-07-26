@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": [
+      { "model": "noclip:block/damp_carpet" },
+      { "model": "noclip:block/damp_carpet", "y": 90 },
+      { "model": "noclip:block/damp_carpet", "y": 180 },
+      { "model": "noclip:block/damp_carpet", "y": 270 }
+    ]
+  }
+}

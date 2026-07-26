@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+
+# ModDevGradle / runs
+run/
+runs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Datagen cache
+src/generated/resources/.cache/
