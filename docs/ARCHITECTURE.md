@@ -127,14 +127,16 @@ centers are guaranteed open because walls only exist on grid lines.
 
 ### `data/noclip/`: worldgen wiring (all datapack-format JSON)
 - **`dimension_type/backrooms.json`**: 64 tall, min_y 0, no skylight,
-  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.05
+  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.15
   (the main brightness knob), overworld effects for directional face shading (the sky is sealed away anyway).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
   no features. Spawn lists carry the full overworld cast (hostiles including
   slime and zombie villager, plus passive animals for player-built pastures).
-  Spawnable darkness comes from the generator in stretches: 2x2-cell dead
-  patches (~12%) and 4x4-cell blackout pockets (~8%); vanilla's block-light-0
-  rule does the rest.
+  The world is mostly lit; spawnable darkness is rare and deliberate: 4x4-cell
+  blackout pockets (~4%) are the real danger zones, dead 2x2-cell patches (~4%)
+  are dim atmosphere with the odd spawn where doorway light doesn't reach, and
+  players engineer the rest by covering or breaking panels (the vanilla
+  dark-room farm).
 - **`worldgen/world_preset/backrooms.json`**: the "world type". Overworld uses
   `noclip:backrooms` generator + dimension type with a fixed `noclip:level_0`
   biome source; Nether and End are vanilla copies for now (they keep their
