@@ -269,13 +269,14 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
 
     /**
      * Cell-center ceiling panel, lit or dead. Dead panels are what create
-     * spawnable darkness: ~15% of cells individually, plus 4x4-cell blackout
-     * pockets (~5% of them) where every panel is out. Vanilla spawn rules do
-     * the rest (monsters need block light 0).
+     * spawnable darkness, and they come in stretches rather than speckle:
+     * 2x2-cell dead patches (~12%) plus 4x4-cell blackout pockets (~8%).
+     * Vanilla spawn rules do the rest (monsters need block light 0).
      */
     private BlockState ceilingLight(long seed, int cellX, int cellZ) {
         boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 20;
-        boolean dead = blackout || (hash(seed, cellX, cellZ, SALT_DEAD_LIGHT) & 0xFF) < 38;
+        boolean dead = blackout
+                || (hash(seed, Math.floorDiv(cellX, 2), Math.floorDiv(cellZ, 2), SALT_DEAD_LIGHT) & 0xFF) < 31;
         return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
                 .setValue(FluorescentLightBlock.LIT, !dead);
     }

@@ -39,6 +39,6 @@ public class NoclipBlocks {
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SNOW)
                     .strength(0.3F)
-                    .lightLevel(state -> state.getValue(FluorescentLightBlock.LIT) ? 11 : 0)
+                    .lightLevel(state -> state.getValue(FluorescentLightBlock.LIT) ? 15 : 0)
                     .sound(SoundType.GLASS));
 }

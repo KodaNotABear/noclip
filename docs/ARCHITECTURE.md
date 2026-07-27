@@ -31,7 +31,7 @@ tab, chunk generator codec) onto the mod event bus. Nothing else.
 The Level 0 palette. Structural blocks (wallpaper, ceiling tile, carpet) use
 `strength(-1, 3600000)` + `noLootTable()` (the bedrock recipe), so the
 generated architecture is unbreakable in survival. The fluorescent light is a
-normal breakable block with a lit/unlit state (light 11 when lit). Design rule:
+normal breakable block with a lit/unlit state (light 15 when lit). Design rule:
 structure is unbreakable, contents/props are the resource base.
 
 ### `item/NoclipItems.java`, `item/NoclipCreativeTabs.java`
@@ -127,14 +127,14 @@ centers are guaranteed open because walls only exist on grid lines.
 
 ### `data/noclip/`: worldgen wiring (all datapack-format JSON)
 - **`dimension_type/backrooms.json`**: 64 tall, min_y 0, no skylight,
-  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.08
+  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.05
   (the main brightness knob), overworld effects for directional face shading (the sky is sealed away anyway).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
   no features. Spawn lists carry the full overworld cast (hostiles including
   slime and zombie villager, plus passive animals for player-built pastures).
-  Spawnable darkness comes from the generator: ~15% of ceiling panels are dead,
-  and 4x4-cell blackout pockets kill every panel; vanilla's block-light-0 rule
-  does the rest.
+  Spawnable darkness comes from the generator in stretches: 2x2-cell dead
+  patches (~12%) and 4x4-cell blackout pockets (~8%); vanilla's block-light-0
+  rule does the rest.
 - **`worldgen/world_preset/backrooms.json`**: the "world type". Overworld uses
   `noclip:backrooms` generator + dimension type with a fixed `noclip:level_0`
   biome source; Nether and End are vanilla copies for now (they keep their
