@@ -76,6 +76,10 @@ An opening is either a 3-wide doorway (centered on the cell-center axis, aligned
 
 **Warehouses** (~8% of zones) are single tall voids: ceiling at y=24, 2x2
 mega-pillars every 16 blocks with fluorescent light bands, no maze walls.
+Isolated (single-zone) warehouses have no pillars and a mostly-dead ceiling
+grid instead: ceiling light cannot reach a floor 23 blocks down, so tall spaces
+either carry floor-level light (pillar bands) or visibly embrace darkness;
+these are the natural danger zones.
 Adjacent warehouse zones merge; borders against normal zones get full-height
 transition walls with door gaps. Connectivity survives zone borders because a
 cell whose binary-tree carve crosses a border gets a doorway instead of a wall,

@@ -77,6 +77,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private static final int SALT_SEALED_DOORS = 0x64;
     private static final int SALT_DEAD_LIGHT = 0x66;
     private static final int SALT_BLACKOUT = 0x68;
+    private static final int SALT_WAREHOUSE_LIGHT = 0x6A;
 
     /** Chance (out of 256) that a cell hosts a single-cell room. */
     private static final int ROOM_CHANCE = 32;
@@ -220,10 +221,17 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private BlockState warehouseState(long seed, int x, int y, int z, int cellX, int cellZ) {
         boolean isolated = isolatedWarehouse(seed, cellX, cellZ);
         if (y == WAREHOUSE_CEILING_Y) {
-            // Isolated (single-zone) warehouses have no pillars, so they get
-            // ceiling panels for some glow; merged ones are lit by pillar bands.
+            // Tall spaces must bring floor-level light or embrace darkness:
+            // ceiling panels 23 blocks up cannot light the floor, so a bright
+            // grid here would look lit while spawning mobs (a broken visual
+            // contract). Isolated warehouses embrace it: a mostly-dead ceiling
+            // grid (~20% still glowing, a failing power grid overhead) makes
+            // the dark, dangerous floor read as intended. Merged warehouses
+            // are lit near the floor by their pillar bands instead.
             if (isolated && Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
-                return ceilingLight(seed, cellX, cellZ);
+                boolean lit = (hash(seed, cellX, cellZ, SALT_WAREHOUSE_LIGHT) & 0xFF) < 51;
+                return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
+                        .setValue(FluorescentLightBlock.LIT, lit);
             }
             return NoclipBlocks.STAINED_CEILING.get().defaultBlockState();
         }
