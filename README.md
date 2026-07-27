@@ -27,8 +27,9 @@ complete Minecraft from inside the endless yellow rooms.
   panels and blackout pockets provide the spawnable darkness.
 - Room-template system: single-cell rooms authored as structure NBT + JSON
   registry entries, loaded from any datapack namespace, with working block
-  entities (loot chests). See [docs/ROOMS.md](docs/ROOMS.md). Ships three
-  placeholder rooms (pillars, cubicles, supply room).
+  entities (loot chests). See [docs/ROOMS.md](docs/ROOMS.md). Ships two
+  placeholder rooms (pillar hall, supply room); the 2x2 big-room pool is
+  empty until authored rooms land.
 
 Planned next: multi-cell rooms + rotation, `neoforge:conditions` on room JSON,
 wall veins, salvage tool, config for breakable walls.

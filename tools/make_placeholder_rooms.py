@@ -61,25 +61,6 @@ WALLPAPER = palette_entry("noclip:yellow_wallpaper")
 blocks = [block([x, y, z], 0) for x, z in [(1, 1), (1, 5), (5, 1), (5, 5)] for y in range(4)]
 write_structure("pillar_room.nbt", [WALLPAPER], blocks)
 
-# --- atrium: 2x2-cell, 12 tall, light-banded pillars + loot cluster -------
-palette = [
-    palette_entry("noclip:yellow_wallpaper"),
-    palette_entry("noclip:fluorescent_light"),
-    palette_entry("minecraft:chest", {"facing": "south"}),
-    palette_entry("minecraft:barrel", {"facing": "up"}),
-]
-blocks = []
-for px, pz in [(2, 2), (2, 11), (11, 2), (11, 11)]:
-    for dx in (0, 1):
-        for dz in (0, 1):
-            for y in range(12):
-                state = 1 if y in (5, 10) else 0  # light bands
-                blocks.append(block([px + dx, y, pz + dz], state))
-blocks.append(block([7, 0, 8], 2, loot_nbt("minecraft:chest", "noclip:chests/level0_supply")))
-blocks.append(block([6, 0, 7], 3, loot_nbt("minecraft:barrel", "noclip:chests/level0_supply")))
-blocks.append(block([8, 0, 7], 3, loot_nbt("minecraft:barrel", "noclip:chests/level0_supply")))
-write_structure("atrium.nbt", palette, blocks, size=(15, 12, 15))
-
 # --- supply_room: lootable chest flanked by barrels -----------------------
 palette = [
     palette_entry("minecraft:chest", {"facing": "south"}),
@@ -92,4 +73,4 @@ blocks = [
 ]
 write_structure("supply_room.nbt", palette, blocks)
 
-print("wrote 3 room templates to", os.path.normpath(OUT))
+print("wrote 2 room templates to", os.path.normpath(OUT))

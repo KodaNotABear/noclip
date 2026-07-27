@@ -31,8 +31,8 @@ tab, chunk generator codec) onto the mod event bus. Nothing else.
 The Level 0 palette. Structural blocks (wallpaper, ceiling tile, carpet) use
 `strength(-1, 3600000)` + `noLootTable()` (the bedrock recipe), so the
 generated architecture is unbreakable in survival. The fluorescent light is a
-normal breakable block with `lightLevel(13)`. Design rule: structure is
-unbreakable, contents/props are the resource base.
+normal breakable block with a lit/unlit state (light 11 when lit). Design rule:
+structure is unbreakable, contents/props are the resource base.
 
 ### `item/NoclipItems.java`, `item/NoclipCreativeTabs.java`
 BlockItems for all four blocks and one creative tab holding them.
@@ -85,7 +85,7 @@ plus one guaranteed door per border side.
 up to 12 tall; the generator raises their ceiling to the template height. Even
 anchoring means a big room is exactly one chunk: no overlap resolution, no
 caching, and block entities stay in-chunk. Warehouse zones exclude both room
-kinds.
+kinds. No big rooms ship yet; the pool is empty until authored templates land.
 
 `layoutSeed` derives the layout's 64-bit seed from the world seed via
 `RandomState.getOrCreateRandomFactory` (the vanilla-sanctioned way to get
@@ -127,7 +127,7 @@ centers are guaranteed open because walls only exist on grid lines.
 
 ### `data/noclip/`: worldgen wiring (all datapack-format JSON)
 - **`dimension_type/backrooms.json`**: 64 tall, min_y 0, no skylight,
-  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.15
+  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.08
   (the main brightness knob), overworld effects for directional face shading (the sky is sealed away anyway).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
   no features. Spawn lists carry the full overworld cast (hostiles including

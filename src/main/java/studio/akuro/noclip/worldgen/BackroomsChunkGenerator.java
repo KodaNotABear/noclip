@@ -274,7 +274,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
      * the rest (monsters need block light 0).
      */
     private BlockState ceilingLight(long seed, int cellX, int cellZ) {
-        boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 13;
+        boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 20;
         boolean dead = blackout || (hash(seed, cellX, cellZ, SALT_DEAD_LIGHT) & 0xFF) < 38;
         return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
                 .setValue(FluorescentLightBlock.LIT, !dead);
