@@ -81,7 +81,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private static final int SALT_DOOR_OFFSET = 0x6C;
 
     /** Chance (out of 256) that a cell hosts a single-cell room. */
-    private static final int ROOM_CHANCE = 32;
+    private static final int ROOM_CHANCE = 12;
     /** Chance (out of 256) that an even-aligned 2x2 cell block hosts a big room. */
     private static final int BIG_ROOM_CHANCE = 28;
 
