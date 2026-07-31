@@ -75,6 +75,8 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private static final int SALT_ROOM_ROT = 0x60;
     private static final int SALT_BIG_ROT = 0x62;
     private static final int SALT_SEALED_DOORS = 0x64;
+    // Reserved for seeded light decay, currently unused: all panels generate
+    // lit. Reuse these exact salts if decay returns, so worlds stay stable.
     private static final int SALT_DEAD_LIGHT = 0x66;
     private static final int SALT_BLACKOUT = 0x68;
     private static final int SALT_WAREHOUSE_LIGHT = 0x6A;
@@ -224,17 +226,12 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private BlockState warehouseState(long seed, int x, int y, int z, int cellX, int cellZ) {
         boolean isolated = isolatedWarehouse(seed, cellX, cellZ);
         if (y == WAREHOUSE_CEILING_Y) {
-            // Tall spaces must bring floor-level light or embrace darkness:
-            // ceiling panels 23 blocks up cannot light the floor, so a bright
-            // grid here would look lit while spawning mobs (a broken visual
-            // contract). Isolated warehouses embrace it: a mostly-dead ceiling
-            // grid (~20% still glowing, a failing power grid overhead) makes
-            // the dark, dangerous floor read as intended. Merged warehouses
-            // are lit near the floor by their pillar bands instead.
+            // Isolated warehouses carry a ceiling panel grid; merged warehouses
+            // are lit near the floor by their pillar bands instead. All panels
+            // generate lit for now; seeded decay may return later.
             if (isolated && Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
-                boolean lit = (hash(seed, cellX, cellZ, SALT_WAREHOUSE_LIGHT) & 0xFF) < 51;
                 return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
-                        .setValue(FluorescentLightBlock.LIT, lit);
+                        .setValue(FluorescentLightBlock.LIT, true);
             }
             return NoclipBlocks.STAINED_CEILING.get().defaultBlockState();
         }
@@ -279,19 +276,15 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     }
 
     /**
-     * Cell-center ceiling panel, lit or dead. The world is overwhelmingly lit
-     * (the fluorescent expanse); decay comes in rare stretches: 2x2-cell dead
-     * patches (~4%, dim, the odd spawn where doorway bleed doesn't reach) and
-     * 4x4-cell blackout pockets (~4%, genuinely black, the real danger zones).
-     * Everything runs on vanilla's block-light-0 rule, so player-engineered
-     * darkness (covering or breaking panels) farms mobs the classic way.
+     * Cell-center ceiling panel. Every panel generates lit for now: darkness is
+     * player-made (covering panels), since mobs only spawn on player-placed
+     * blocks anyway. Seeded decay (dead patches, blackout pockets) lived here
+     * before and can return once darkness has a gameplay role again; keep the
+     * old salts if it does, so existing worlds keep their layouts.
      */
     private BlockState ceilingLight(long seed, int cellX, int cellZ) {
-        boolean blackout = (hash(seed, Math.floorDiv(cellX, 4), Math.floorDiv(cellZ, 4), SALT_BLACKOUT) & 0xFF) < 10;
-        boolean dead = blackout
-                || (hash(seed, Math.floorDiv(cellX, 2), Math.floorDiv(cellZ, 2), SALT_DEAD_LIGHT) & 0xFF) < 10;
         return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState()
-                .setValue(FluorescentLightBlock.LIT, !dead);
+                .setValue(FluorescentLightBlock.LIT, true);
     }
 
     /** A warehouse zone with no orthogonally adjacent warehouse zone. */
