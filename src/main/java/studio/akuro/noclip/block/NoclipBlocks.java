@@ -9,10 +9,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import studio.akuro.noclip.Noclip;
 
 /**
- * Level 0 palette. Structural blocks (wallpaper, ceiling, carpet) are
+ * Level 0 palette. Everything the generator places, lights included, is
  * bedrock-tier unbreakable: the generated architecture is not a quarry.
- * Props (lights, and later furniture/fixtures) are breakable and form the
- * early-game resource base.
+ * The resource base comes from room contents (chests, and later breakable
+ * furniture/fixtures), not from the structure itself.
  */
 public class NoclipBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Noclip.MOD_ID);
@@ -39,7 +39,8 @@ public class NoclipBlocks {
             FluorescentLightBlock::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.SNOW)
-                    .strength(0.3F)
+                    .strength(-1.0F, 3600000.0F)
+                    .noLootTable()
                     .lightLevel(state -> state.getValue(FluorescentLightBlock.LIT) ? 15 : 0)
                     .emissiveRendering((state, level, pos) -> state.getValue(FluorescentLightBlock.LIT))
                     .sound(SoundType.GLASS));
