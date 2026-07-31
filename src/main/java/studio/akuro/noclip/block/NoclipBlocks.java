@@ -22,6 +22,7 @@ public class NoclipBlocks {
                 .mapColor(color)
                 .strength(-1.0F, 3600000.0F)
                 .noLootTable()
+                .isValidSpawn((state, level, pos, entityType) -> false)
                 .sound(sound);
     }
 
@@ -40,5 +41,6 @@ public class NoclipBlocks {
                     .mapColor(MapColor.SNOW)
                     .strength(0.3F)
                     .lightLevel(state -> state.getValue(FluorescentLightBlock.LIT) ? 15 : 0)
+                    .emissiveRendering((state, level, pos) -> state.getValue(FluorescentLightBlock.LIT))
                     .sound(SoundType.GLASS));
 }

@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "noclip:block/stained_ceiling" }
+    "": [
+      { "model": "noclip:block/stained_ceiling" },
+      { "model": "noclip:block/stained_ceiling", "y": 90 },
+      { "model": "noclip:block/stained_ceiling", "y": 180 },
+      { "model": "noclip:block/stained_ceiling", "y": 270 }
+    ]
   }
 }

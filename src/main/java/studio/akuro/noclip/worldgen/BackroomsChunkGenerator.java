@@ -78,6 +78,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     private static final int SALT_DEAD_LIGHT = 0x66;
     private static final int SALT_BLACKOUT = 0x68;
     private static final int SALT_WAREHOUSE_LIGHT = 0x6A;
+    private static final int SALT_DOOR_OFFSET = 0x6C;
 
     /** Chance (out of 256) that a cell hosts a single-cell room. */
     private static final int ROOM_CHANCE = 32;
@@ -172,7 +173,9 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             if (isWallColumn(seed, x, z)) {
                 return NoclipBlocks.YELLOW_WALLPAPER.get().defaultBlockState();
             }
-            if (Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
+            RoomManager.LoadedRoom room = roomAt(seed, cellX, cellZ);
+            if (!suppressesGeneratedLights(room)
+                    && Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
                 return ceilingLight(seed, cellX, cellZ);
             }
             int localX = Math.floorMod(x, CELL);
@@ -197,9 +200,9 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             // Only strict-interior columns sample the room template; boundary
             // columns (doorways and open segments, localX/Z == 0) stay clear.
             if (localX >= 1 && localZ >= 1) {
-                RoomGrid room = roomAt(seed, cellX, cellZ);
+                RoomManager.LoadedRoom room = roomAt(seed, cellX, cellZ);
                 if (room != null) {
-                    BlockState state = room.sample(localX - 1, y - WALL_MIN_Y, localZ - 1,
+                    BlockState state = room.grid().sample(localX - 1, y - WALL_MIN_Y, localZ - 1,
                             rotationAt(seed, cellX, cellZ, SALT_ROOM_ROT));
                     if (state != null) {
                         return state;
@@ -303,15 +306,24 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
 
     private BlockState transitionWallState(long seed, int cellX, int cellZ, boolean west, int along, int y) {
         Opening opening = segmentOpening(seed, cellX, cellZ, west);
-        if (opening == Opening.DOOR && y <= WALL_MAX_Y && isDoorGap(along)) {
+        if (opening == Opening.DOOR && y <= WALL_MAX_Y
+                && isDoorGap(seed, cellX, cellZ, west, along)) {
             return Blocks.AIR.defaultBlockState();
         }
         return NoclipBlocks.YELLOW_WALLPAPER.get().defaultBlockState();
     }
 
-    /** 3-wide gap centered on the cell-center axis, aligned with the ceiling lights. */
-    private static boolean isDoorGap(int along) {
-        return along >= 3 && along <= 5;
+    /**
+     * A seeded 2- or 3-wide doorway, offset from the cell center to break up
+     * long grid-aligned sightlines. The edge-owning cell and orientation are
+     * shared by both chunks that can observe the wall.
+     */
+    private static boolean isDoorGap(long seed, int cellX, int cellZ, boolean west, int along) {
+        long h = hash(seed, cellX, cellZ, west ? SALT_DOOR_OFFSET : SALT_DOOR_OFFSET + 1);
+        int width = 2 + (int) (h & 1L);
+        int startCount = CELL - width - 1;
+        int start = 1 + (int) Long.remainderUnsigned(h >>> 1, startCount);
+        return along >= start && along < start + width;
     }
 
     /** True if this cell is a tall volume: warehouse zone or part of a big room. */
@@ -346,7 +358,8 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
         }
         int ceilingY = WALL_MIN_Y + room.sizeY();
         if (y == ceilingY) {
-            if (Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
+            if (!suppressesGeneratedLights(loadedRoom)
+                    && Math.floorMod(x, CELL) == CELL / 2 && Math.floorMod(z, CELL) == CELL / 2) {
                 return NoclipBlocks.FLUORESCENT_LIGHT.get().defaultBlockState();
             }
             return NoclipBlocks.STAINED_CEILING.get().defaultBlockState();
@@ -376,14 +389,23 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
         }
         int segmentIndex;
         int along;
+        int edgeCellX;
+        int edgeCellZ;
+        boolean west;
         if (superX == 0) {        // west side: segments 0..1
             segmentIndex = superZ / CELL;
             along = Math.floorMod(superZ, CELL);
+            edgeCellX = anchorX;
+            edgeCellZ = anchorZ + segmentIndex;
+            west = true;
         } else {                  // north side (superZ == 0): segments 2..3
             segmentIndex = 2 + superX / CELL;
             along = Math.floorMod(superX, CELL);
+            edgeCellX = anchorX + segmentIndex - 2;
+            edgeCellZ = anchorZ;
+            west = false;
         }
-        if (along != 0 && isDoorGap(along)
+        if (along != 0 && isDoorGap(seed, edgeCellX, edgeCellZ, west, along)
                 && isSealedDoorSegment(seed, anchorX, anchorZ, doorCount, segmentIndex)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -418,13 +440,13 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
 
     private Zone zoneAt(long seed, int cellX, int cellZ) {
         int roll = (int) (hash(seed, Math.floorDiv(cellX, ZONE_CELLS), Math.floorDiv(cellZ, ZONE_CELLS), SALT_ZONE) & 0xFF);
-        if (roll < 88) {          // ~34%: tight maze, mostly doorways, real dead ends
-            return new Zone(false, 16, 26);
-        } else if (roll < 176) {  // ~34%: mixed
-            return new Zone(false, 46, 64);
-        } else if (roll < 236) {  // ~23%: open halls, the classic pillar-field look
-            return new Zone(false, 146, 192);
-        } else {                  // ~8%: warehouse void
+        if (roll < 128) {         // 50%: tight maze, almost entirely offset doorways
+            return new Zone(false, 8, 8);
+        } else if (roll < 205) {  // ~30%: mixed, with occasional loops and missing walls
+            return new Zone(false, 24, 32);
+        } else if (roll < 243) {  // ~15%: open halls, the classic pillar-field look
+            return new Zone(false, 112, 192);
+        } else {                  // ~5%: warehouse void
             return new Zone(true, 0, 0);
         }
     }
@@ -446,7 +468,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             case SOLID -> true;
             case DOOR -> {
                 int along = localX == 0 ? localZ : localX;
-                yield !isDoorGap(along);
+                yield !isDoorGap(seed, cellX, cellZ, localX == 0, along);
             }
         };
     }
@@ -549,7 +571,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
     }
 
     @Nullable
-    private RoomGrid roomAt(long seed, int cellX, int cellZ) {
+    private RoomManager.LoadedRoom roomAt(long seed, int cellX, int cellZ) {
         List<RoomManager.LoadedRoom> rooms = RoomManager.smallRooms();
         if (rooms.isEmpty() || zoneAt(seed, cellX, cellZ).warehouse()) {
             return null;
@@ -559,7 +581,11 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
             return null;
         }
         return weightedPick(rooms, RoomManager.smallTotalWeight(),
-                hash(seed, cellX, cellZ, SALT_ROOM_PICK)).grid();
+                hash(seed, cellX, cellZ, SALT_ROOM_PICK));
+    }
+
+    private static boolean suppressesGeneratedLights(@Nullable RoomManager.LoadedRoom room) {
+        return room != null && room.definition().suppressGeneratedLights();
     }
 
     @Nullable
@@ -616,9 +642,10 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
         }
         for (int cellX = anchorX; cellX <= anchorX + 1; cellX++) {
             for (int cellZ = anchorZ; cellZ <= anchorZ + 1; cellZ++) {
-                RoomGrid room = roomAt(seed, cellX, cellZ);
+                RoomManager.LoadedRoom room = roomAt(seed, cellX, cellZ);
                 if (room != null) {
-                    placeBlockEntities(room, cellX, cellZ, chunk, rotationAt(seed, cellX, cellZ, SALT_ROOM_ROT));
+                    placeBlockEntities(room.grid(), cellX, cellZ, chunk,
+                            rotationAt(seed, cellX, cellZ, SALT_ROOM_ROT));
                 }
             }
         }
@@ -698,7 +725,7 @@ public class BackroomsChunkGenerator extends ChunkGenerator {
         int cellZ = Math.floorDiv(pos.getZ(), CELL);
         Zone zone = zoneAt(seed, cellX, cellZ);
         int roll = (int) (hash(seed, Math.floorDiv(cellX, ZONE_CELLS), Math.floorDiv(cellZ, ZONE_CELLS), SALT_ZONE) & 0xFF);
-        String zoneName = zone.warehouse() ? "warehouse" : roll < 88 ? "maze" : roll < 176 ? "mixed" : "halls";
+        String zoneName = zone.warehouse() ? "warehouse" : roll < 128 ? "maze" : roll < 205 ? "mixed" : "halls";
         info.add("Backrooms cell: " + cellX + ", " + cellZ + " (" + zoneName + ")");
     }
 }

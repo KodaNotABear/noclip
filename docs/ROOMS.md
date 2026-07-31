@@ -29,7 +29,7 @@ Two files define a room:
 
 ```json
 {
-  "template": "noclip:rooms/pillar_room",
+  "template": "noclip:rooms/my_room",
   "weight": 4,
   "cells": 1
 }
@@ -37,6 +37,8 @@ Two files define a room:
 
 `weight` is relative selection weight within the room's size pool (default 1);
 `cells` is 1 or 2 (default 1). Single-cell and big rooms roll separately.
+Set `"suppress_generated_lights": true` for dark or custom-lit rooms; the
+generator will leave out its usual cell-center fluorescent ceiling panels.
 
 Big rooms may also set `"doors": N` (1-8): the room's outer boundary becomes
 solid wall except exactly N doorways, at seeded positions among the 8 perimeter

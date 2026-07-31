@@ -3,6 +3,11 @@
 Every item required to "complete Minecraft" needs a reliable source inside the
 backrooms. This is working checklist. Dashes are missing sources.
 
+Beta note: Level 0 is also available as `noclip:backrooms` from normal worlds
+through the Noclip Key. Until this checklist closes, that is the recommended
+survival route for players who want vanilla completion plus Backrooms
+exploration.
+
 ## Philosophy: vanilla loops first
 
 The appeal of challenge worlds like skyblock is that the knowledge transfers:
@@ -29,7 +34,7 @@ Status: `[ ]` unsourced, `[~]` designed but not implemented, `[x]` implemented.
 
 | Need | Planned source | Status |
 |---|---|---|
-| Hostile mob spawns | Dead-light cells and blackout pockets (vanilla block-light-0 rule) | [x] |
+| Hostile mob spawns | Player-built dark rooms or authored spawn-floor rooms (vanilla block-light-0 rule) | [~] |
 | Iron | Zombie drops; iron farm later (villagers via zombie-villager curing) | [x] |
 | Redstone | Witch drops | [x] |
 | String, spider eyes | Spiders | [x] |

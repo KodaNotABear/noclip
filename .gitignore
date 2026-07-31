@@ -21,3 +21,6 @@ Thumbs.db
 
 # Datagen cache
 src/generated/resources/.cache/
+
+# texture iterations kept for reference, not shipped
+tools/reference/

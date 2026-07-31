@@ -30,12 +30,22 @@ tab, chunk generator codec) onto the mod event bus. Nothing else.
 ### `block/NoclipBlocks.java`
 The Level 0 palette. Structural blocks (wallpaper, ceiling tile, carpet) use
 `strength(-1, 3600000)` + `noLootTable()` (the bedrock recipe), so the
-generated architecture is unbreakable in survival. The fluorescent light is a
-normal breakable block with a lit/unlit state (light 15 when lit). Design rule:
-structure is unbreakable, contents/props are the resource base.
+generated architecture is unbreakable in survival. Damp carpet rejects mob
+spawns, so ambient monsters come from deliberately spawnable room surfaces or
+player-built farms rather than every dark generated floor. The fluorescent
+light is a normal breakable block with a lit/unlit state (light 15 when lit).
+Design rule: structure is unbreakable, contents/props are the resource base.
 
 ### `item/NoclipItems.java`, `item/NoclipCreativeTabs.java`
-BlockItems for all four blocks and one creative tab holding them.
+BlockItems for all four blocks, the Noclip Key item, and one creative tab
+holding them.
+
+### `item/NoclipKeyItem.java`
+Beta access item for normal worlds. On use, it sends players to
+`noclip:backrooms` at the safe cell center `(4, 1, 4)`; using it from that
+dimension returns them to the overworld shared spawn. This keeps Level 0
+playable before the full in-dimension progression loop exists, without making
+the Backrooms-only world preset disappear.
 
 ### `worldgen/NoclipWorldgen.java`
 Registers the generator's `MapCodec` into `Registries.CHUNK_GENERATOR`. That
@@ -69,12 +79,16 @@ west and north wall segments are decided by `segmentOpening`:
 2. **Braiding**: extra hash rolls reopen some of the remaining walls, creating
    loops so the maze isn't a single spindly tree.
 3. **Zones**: a coarse hash over 8x8-cell regions (64 blocks) picks the region
-   type (tight corridor maze, mixed, open pillar halls, or **warehouse**), so
-   the traversal feel varies across the map. Shown on the F3 debug screen.
+   type (50% tight corridor maze, 30% mixed, 15% open pillar halls, or 5%
+   **warehouse**), so the traversal feel varies across the map. Shown on the F3
+   debug screen.
 
-An opening is either a 3-wide doorway (centered on the cell-center axis, aligned with the ceiling lights) or the full segment (another hash).
+An opening is either a seeded 2- or 3-wide doorway, offset from center to break
+up long grid-aligned sightlines, or the full segment (another hash). Tight and
+mixed zones strongly favor doorways; fully absent walls are concentrated in
+open halls.
 
-**Warehouses** (~8% of zones) are single tall voids: ceiling at y=24, 2x2
+**Warehouses** (~5% of zones) are single tall voids: ceiling at y=24, 2x2
 mega-pillars every 16 blocks with fluorescent light bands, no maze walls.
 Isolated (single-zone) warehouses have no pillars and a mostly-dead ceiling
 grid instead: ceiling light cannot reach a floor 23 blocks down, so tall spaces
@@ -131,16 +145,17 @@ centers are guaranteed open because walls only exist on grid lines.
 
 ### `data/noclip/`: worldgen wiring (all datapack-format JSON)
 - **`dimension_type/backrooms.json`**: 64 tall, min_y 0, no skylight,
-  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.15
+  `has_ceiling` true (spawn logic + thematically true), `ambient_light` 0.22
   (the main brightness knob), overworld effects for directional face shading (the sky is sealed away anyway).
 - **`worldgen/biome/level_0.json`**: one biome: yellow fog, cave mood sounds,
   no features. Spawn lists carry the full overworld cast (hostiles including
   slime and zombie villager, plus passive animals for player-built pastures).
-  The world is mostly lit; spawnable darkness is rare and deliberate: 4x4-cell
-  blackout pockets (~4%) are the real danger zones, dead 2x2-cell patches (~4%)
-  are dim atmosphere with the odd spawn where doorway light doesn't reach, and
-  players engineer the rest by covering or breaking panels (the vanilla
-  dark-room farm).
+  The world is mostly lit. Natural generated structure is not a monster-spawn
+  surface, including the sealed roof; spawnable darkness is reserved for
+  deliberately authored room surfaces and for player engineering, like covering
+  or breaking panels over a placed spawn floor (the vanilla dark-room farm).
+- **`dimension/backrooms.json`**: registers Level 0 as `noclip:backrooms`, so
+  normal worlds can access it through the Noclip Key.
 - **`worldgen/world_preset/backrooms.json`**: the "world type". Overworld uses
   `noclip:backrooms` generator + dimension type with a fixed `noclip:level_0`
   biome source; Nether and End are vanilla copies for now (they keep their
@@ -149,7 +164,8 @@ centers are guaranteed open because walls only exist on grid lines.
 - **`data/minecraft/tags/worldgen/world_preset/normal.json`**: injects the
   preset into the create-world screen's world-type cycle.
 - **`backrooms_rooms/*.json` + `structure/rooms/*.nbt`**: the shipped room
-  pool (see ROOMS.md).
+  pool (see ROOMS.md). Current content is one placeholder supply room while the
+  beta room set is authored.
 - **`loot_table/`**: block drops (fluorescent light) and the supply-room chest
   table (`chests/level0_supply`).
 

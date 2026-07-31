@@ -3,6 +3,8 @@
   "block.noclip.stained_ceiling": "Stained Ceiling Tile",
   "block.noclip.damp_carpet": "Damp Carpet",
   "block.noclip.fluorescent_light": "Fluorescent Light",
+  "item.noclip.noclip_key": "Noclip Key",
+  "item.noclip.noclip_key.missing_dimension": "The Backrooms are unreachable in this world",
   "itemGroup.noclip": "Noclip",
   "generator.noclip.backrooms": "The Backrooms"
 }

@@ -56,11 +56,6 @@ def loot_nbt(block_id, table):
     return [(8, "id", tag_string(block_id)), (8, "LootTable", tag_string(table))]
 
 
-# --- pillar_room: four structural pillars ---------------------------------
-WALLPAPER = palette_entry("noclip:yellow_wallpaper")
-blocks = [block([x, y, z], 0) for x, z in [(1, 1), (1, 5), (5, 1), (5, 5)] for y in range(4)]
-write_structure("pillar_room.nbt", [WALLPAPER], blocks)
-
 # --- supply_room: lootable chest flanked by barrels -----------------------
 palette = [
     palette_entry("minecraft:chest", {"facing": "south"}),
@@ -73,4 +68,4 @@ blocks = [
 ]
 write_structure("supply_room.nbt", palette, blocks)
 
-print("wrote 2 room templates to", os.path.normpath(OUT))
+print("wrote 1 room template to", os.path.normpath(OUT))
